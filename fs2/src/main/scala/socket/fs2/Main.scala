@@ -19,7 +19,7 @@ object Main extends IOApp {
         serverSocket
           .reads()
           .evalMap { packet =>
-            println(packet.bytes.toString())
+            println(packet.bytes.map(_.toChar))
             serverSocket.write(packet)
           }
           .drain
