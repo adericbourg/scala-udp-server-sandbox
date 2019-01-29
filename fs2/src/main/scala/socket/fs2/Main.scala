@@ -13,23 +13,18 @@ object Main extends IOApp {
 
   // NOT WORKING YET
   def run(args: List[String]): IO[ExitCode] = {
-    try {
-      val address = new InetSocketAddress("localhost", 7654)
-      val program = Stream.resource(Socket[IO](address))
-        .flatMap { serverSocket =>
-          serverSocket
-            .reads()
-            .evalMap { packet =>
-              println(packet.bytes.toString())
-              serverSocket.write(packet)
-            }
-            .drain
-        }
-      program.compile.drain
-        .as(ExitCode.Success)
-    }
-    finally {
-      socketGroup.close()
-    }
+    val address = new InetSocketAddress("localhost", 7654)
+    val program = Stream.resource(Socket[IO](address))
+      .flatMap { serverSocket =>
+        serverSocket
+          .reads()
+          .evalMap { packet =>
+            println(packet.bytes.toString())
+            serverSocket.write(packet)
+          }
+          .drain
+      }
+    program.compile.drain
+      .as(ExitCode.Success)
   }
 }
